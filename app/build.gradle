@@ -58,8 +58,7 @@ dependencies {
     implementation 'com.twitter.sdk.android:twitter:3.1.1'
     implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
 
-    //microsdot
-    implementation 'com.microsoft.identity.client:msal:2.+'
+
 
 
 }

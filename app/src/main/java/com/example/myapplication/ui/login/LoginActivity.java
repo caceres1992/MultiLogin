@@ -49,83 +49,46 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity   {
-        SharedPreferences preferences;
+public class LoginActivity extends AppCompatActivity {
+    SharedPreferences preferences;
     FirebaseAuth auth;
 
     LoginButton btn_login_Facebook;
     TextView username;
     CallbackManager mCallbackManager;
 
-//    List<AuthUI.IdpConfig> provider = Arrays.asList(
-//            new AuthUI.IdpConfig.GitHubBuilder().build(),
-//            new AuthUI.IdpConfig.FacebookBuilder().build(),
-//            new AuthUI.IdpConfig.MicrosoftBuilder().build(),
-//            new AuthUI.IdpConfig.TwitterBuilder().build()
-//
-//    );
-
-    private LoginViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getSharedPreferences("datos",MODE_PRIVATE);
+        preferences = getSharedPreferences("datos", MODE_PRIVATE);
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
         mCallbackManager = CallbackManager.Factory.create();
-username = findViewById(R.id.username_facebook);
-btn_login_Facebook = findViewById(R.id.login_button_para_facebook);
-btn_login_Facebook.setReadPermissions("email","public_profile");
+        username = findViewById(R.id.username_facebook);
+        btn_login_Facebook = findViewById(R.id.login_button_para_facebook);
+        btn_login_Facebook.setReadPermissions("email", "public_profile");
 
 
-btn_login_Facebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-    @Override
-    public void onSuccess(LoginResult loginResult) {
-        handleFacebookAccessToken(loginResult.getAccessToken());
-    }
+        btn_login_Facebook.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
 
-    @Override
-    public void onCancel() {
-        Log.d("Cacelado ", "facebook:onCancel");
+            @Override
+            public void onCancel() {
+                Log.d("Cacelado ", "facebook:onCancel");
 
-    }
+            }
 
-    @Override
-    public void onError(FacebookException error) {
-        Log.d("ERROR  ", "facebook:onError", error);
+            @Override
+            public void onError(FacebookException error) {
+                Log.d("ERROR  ", "facebook:onError", error);
 
-    }
-});
-//btn_login_Facebook.setOnClickListener(this::onClick);
-
-// Initialize Facebook Login button
-
-
-
-
-
-//        auth = FirebaseAuth.getInstance();
-//        authStateListener = firebaseAuth -> {
-//            FirebaseUser user = firebaseAuth.getCurrentUser();
-//
-//            if (user !=null){
-//                Toast.makeText(getApplicationContext(),"iniciaste session " +user.getDisplayName(), Toast.LENGTH_LONG).show();
-//                Intent intent = new Intent (getApplicationContext(), ProfileActivity.class);
-//                intent.putExtra("facebookName",user.getEmail());
-//                startActivity(intent);
-//                finish();
-//            }else {
-//                startActivityForResult(AuthUI.getInstance()
-//                        .createSignInIntentBuilder()
-//                        .setAvailableProviders(provider)
-//                        .setIsSmartLockEnabled(false)
-//                        .build(),REQUEST_CODE
-//                        );
-//            }
-//
-//        };
+            }
+        });
 
 
     }
@@ -136,17 +99,17 @@ btn_login_Facebook.registerCallback(mCallbackManager, new FacebookCallback<Login
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()){
-                        Toast.makeText(getApplicationContext(),"signInWithCredential:success"+task.getResult().getUser().getEmail(),Toast.LENGTH_LONG).show();
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "signInWithCredential:success" + task.getResult().getUser().getEmail(), Toast.LENGTH_LONG).show();
                         FirebaseUser user = auth.getCurrentUser();
                         updateUI(user);
 
                         SharedPreferences.Editor editor = preferences.edit()
-                                .putString("resultado",task.getResult().getUser().getDisplayName());
+                                .putString("resultado", task.getResult().getUser().getDisplayName());
                         editor.commit();
-                        Intent intent = new Intent (getApplicationContext(), ProfileActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                         startActivity(intent);
-                    }else {
+                    } else {
                         Log.w("TAG", "signInWithCredential:failure", task.getException());
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
@@ -162,7 +125,7 @@ btn_login_Facebook.registerCallback(mCallbackManager, new FacebookCallback<Login
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode,resultCode,data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
 

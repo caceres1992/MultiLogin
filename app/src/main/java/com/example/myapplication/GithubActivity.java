@@ -29,15 +29,15 @@ import java.util.List;
 
 
 public class GithubActivity extends AppCompatActivity implements View.OnClickListener {
-FirebaseAuth firebaseAuth;
+    FirebaseAuth firebaseAuth;
     EditText usuario;
     Button btn_inciar;
-SharedPreferences preferences;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getSharedPreferences("datos",MODE_PRIVATE);
+        preferences = getSharedPreferences("datos", MODE_PRIVATE);
         setContentView(R.layout.activity_github);
 
         usuario = findViewById(R.id.git_username);
@@ -51,48 +51,48 @@ SharedPreferences preferences;
 
     @Override
     public void onClick(View v) {
-        if (TextUtils.isEmpty(usuario.getText().toString())){
-            Toast.makeText(getApplicationContext(),"Enter Email",Toast.LENGTH_LONG).show();
-        }else {
+        if (TextUtils.isEmpty(usuario.getText().toString())) {
+            Toast.makeText(getApplicationContext(), "Enter Email", Toast.LENGTH_LONG).show();
+        } else {
             SignInWithGithubProvider(
                     OAuthProvider.newBuilder("github.com")
-                    .addCustomParameter("login",usuario.getText().toString())
-                    .setScopes(
+                            .addCustomParameter("login", usuario.getText().toString())
+                            .setScopes(
 
                                     new ArrayList<String>() {
                                         {
                                             add("user:email");
                                         }
                                     }
-                    )
-                    .build()
+                            )
+                            .build()
             );
         }
     }
 
     private void SignInWithGithubProvider(OAuthProvider login) {
         Task<AuthResult> pendingAuthTask = firebaseAuth.getPendingAuthResult();
-        if (pendingAuthTask !=null){
+        if (pendingAuthTask != null) {
             pendingAuthTask.addOnSuccessListener(authResult -> {
-            Toast.makeText(getApplicationContext(),"User Exist " + authResult.getAdditionalUserInfo().getUsername(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "User Exist " + authResult.getAdditionalUserInfo().getUsername(), Toast.LENGTH_LONG).show();
             }).addOnFailureListener(e -> {
-                Toast.makeText(getApplicationContext(),"Error " +e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             });
-        }else {
-            firebaseAuth.startActivityForSignInWithProvider(this,login).addOnFailureListener(
+        } else {
+            firebaseAuth.startActivityForSignInWithProvider(this, login).addOnFailureListener(
                     e -> {
-                        Toast.makeText(getApplicationContext(),"Error " +e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Error " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     }
             )
-            .addOnSuccessListener(authResult -> {
+                    .addOnSuccessListener(authResult -> {
 
-                SharedPreferences.Editor editor = preferences.edit()
-                        .putString("resultado", authResult.getAdditionalUserInfo().getUsername());
-                editor.commit();
-                Intent intent = new Intent (getApplicationContext(), ProfileActivity.class);
-                startActivity(intent);
-                finish();
-            });
+                        SharedPreferences.Editor editor = preferences.edit()
+                                .putString("resultado", authResult.getAdditionalUserInfo().getUsername());
+                        editor.commit();
+                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(intent);
+                        finish();
+                    });
         }
     }
 }
